@@ -1,11 +1,11 @@
 # Template file for 'vim'
 pkgname=vim
 version=9.2.1031
-revision=1
+revision=2
 create_wrksrc=required
 hostmakedepends="gettext glib-devel pkg-config
  $(vopt_if gtk3 wayland-devel)"
-makedepends="acl-devel ncurses-devel
+makedepends="acl-devel ncurses-devel python3-devel
  $(vopt_if x11 libXt-devel)
  $(vopt_if gtk3 gtk+3-devel)
  $(vopt_if huge 'lua53-devel perl python3-devel ruby-devel')"
@@ -23,9 +23,9 @@ build_options="x11 gtk3 huge"
 desc_option_huge="Enable support for many language interpreters"
 build_options_default="x11 gtk3"
 # XXX vim-huge cannot be cross compiled for now.
-if [ -z "$CROSS_BUILD" ]; then
-	build_options_default+=" huge"
-fi
+#if [ -z "$CROSS_BUILD" ]; then
+#	build_options_default+=" "
+#fi
 
 subpackages="xxd vim-common $(vopt_if x11 vim-x11) $(vopt_if gtk3 gvim)
  $(vopt_if huge "vim-huge vim-huge-python3 $(vopt_if gtk3 gvim-huge)")"
@@ -51,9 +51,10 @@ pre_configure() {
 
 do_configure() {
 	args="--enable-cscope --enable-multibyte --with-tlib=ncursesw
-		--with-ex-name=vim-ex --with-view-name=vim-view"
+		--with-ex-name=vim-ex --with-view-name=vim-view
+		--enable-xterm-clipboard"
 
-	nohuge_args="--disable-perlinterp --disable-pythoninterp
+	nohuge_args="--disable-perlinterp --enable-python3interp=dynamic
 		--disable-rubyinterp --disable-netbeans --disable-gpm"
 
 	if [ "$CROSS_BUILD" ]; then
